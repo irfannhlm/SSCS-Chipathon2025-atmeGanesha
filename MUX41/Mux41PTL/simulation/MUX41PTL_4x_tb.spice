@@ -1,34 +1,47 @@
-** sch_path: /foss/designs/MUX41PTL_tb.sch
+** sch_path: /foss/designs/Mux41PTL/MUX41PTL_tb.sch
 **.subckt MUX41PTL_tb
-x1 VDD GND S0 A B Y C D S1 Mux41PTL
+.include "/foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice"
+.lib "/foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice" typical
+
 V1 VDD GND 3.3
-V2 A GND 1.8
-V3 B GND 0
-V4 C GND 0
-V5 D GND 1.8
-V6 S1 GND PULSE(0 1.8 0 1n 1n 20n 40n)
-V7 S0 GND PULSE(0 1.8 40n 1n 1n 40n 80n)
-**** begin user architecture code
+V2 A   GND 3.3
+V3 B   GND 0
+V4 C   GND 0
+V5 D   GND 3.3
+V6 S1  GND 0
+V7 S0  GND PULSE(0 3.3 10n 0.1n 0.1n 20n 40n)
+x2 VDD GND S0 A B Y C D S1 Mux41PTL
+CLoad Y GND {C} m=1
+**.ends
 
 
-.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
-.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+.param C=1.5f
+
 
 .control
-save all
-tran 1n 80n
-write test_mux41.raw
+    tran 0.1n 60n
+
+    * Propagation Delays (50% input to 50% output, 3.3V logic -> 1.65V trip)
+    meas tran tphl TRIG v(S0) val=1.65 rise=1 TARG v(Y) val=1.65 fall=1
+    meas tran tplh TRIG v(S0) val=1.65 fall=1 TARG v(Y) val=1.65 rise=1
+
+    * Transition Times (10% to 90% of output, 3.3V logic)
+    meas tran trise TRIG v(Y) val=0.33 rise=1 TARG v(Y) val=2.97 rise=1
+    meas tran tfall TRIG v(Y) val=2.97 fall=1 TARG v(Y) val=0.33 fall=1
+
+    * Output Voltage Levels
+    meas tran VOH MAX v(Y) from=40n to=55n
+    meas tran VOL MIN v(Y) from=15n to=30n
+
+    plot v(S0)+4 v(Y)
 .endc
 
 
 
 
-**** end user architecture code
-**.ends
-
-* expanding   symbol:  Mux41PTL.sym # of pins=9
-** sym_path: /foss/designs/Mux41PTL.sym
-** sch_path: /foss/designs/Mux41PTL.sch
+* expanding   symbol:  Mux41PTL/Mux41PTL.sym # of pins=9
+** sym_path: /foss/designs/Mux41PTL/Mux41PTL.sym
+** sch_path: /foss/designs/Mux41PTL/Mux41PTL.sch
 .subckt Mux41PTL VDD VSS S0 A_in B_in Y_out C_in D_in S1
 *.ipin D_in
 *.ipin C_in

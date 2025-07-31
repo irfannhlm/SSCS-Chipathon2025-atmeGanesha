@@ -173,7 +173,6 @@ C {ipin.sym} 170 -570 0 0 {name=p5 lab=S0
 C {ipin.sym} 170 -610 0 0 {name=p6 lab=S1}
 C {iopin.sym} 170 -650 2 0 {name=p7 lab=VSS}
 C {iopin.sym} 170 -690 2 0 {name=p8 lab=VDD}
-C {opin.sym} 780 -280 0 0 {name=p9 lab=Y_out}
 C {symbols/pfet_03v3.sym} 350 -60 3 0 {name=M1
 L=0.3u
 W=6.8u
@@ -340,3 +339,4 @@ spiceprefix=X
 }
 C {lab_wire.sym} 580 -380 1 0 {name=p20 sig_type=std_logic lab=VDD}
 C {lab_wire.sym} 580 -420 3 0 {name=p21 sig_type=std_logic lab=VSS}
+C {opin.sym} 780 -280 0 0 {name=p22 lab=Y_out}

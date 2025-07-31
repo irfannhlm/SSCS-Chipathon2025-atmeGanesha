@@ -14,8 +14,8 @@ C {lab_pin.sym} 210 -190 0 0 {name=p2 sig_type=std_logic lab=A}
 C {lab_pin.sym} 210 -170 0 0 {name=p3 sig_type=std_logic lab=B}
 C {lab_pin.sym} 210 -150 0 0 {name=p4 sig_type=std_logic lab=C}
 C {lab_pin.sym} 210 -130 0 0 {name=p5 sig_type=std_logic lab=D}
-C {vdd.sym} 280 -80 2 0 {name=l4 lab=VDD}
-C {gnd.sym} 260 -80 0 0 {name=l5 lab=GND}
+C {vdd.sym} 280 -90 2 0 {name=l4 lab=VDD}
+C {gnd.sym} 260 -90 0 0 {name=l5 lab=GND}
 C {lab_pin.sym} 260 -230 3 1 {name=p7 sig_type=std_logic lab=S1}
 C {lab_pin.sym} 280 -230 3 1 {name=p8 sig_type=std_logic lab=S0}
 C {gnd.sym} 30 -60 0 0 {name=l6 lab=GND}
@@ -37,13 +37,40 @@ C {code.sym} 430 -310 0 0 {name=spice only_toplevel=false value="
 .include "/foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice"
 .lib "/foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice" typical
 
+.param CL=1.5f
+CLoad Y 0 \{C\}
+
 .control
 save all
-tran 1n 80n
-write test_mux41.raw
+tran 100p 100n
+
+* Measure delay relative to select line S0
+.meas tran tpHL TRIG v(S0) VAL='0.9' RISE=1 \\
+              TARG v(Y) VAL='0.9' FALL=1
+
+.meas tran tpLH TRIG v(S0) VAL='0.9' FALL=1 \\
+              TARG v(Y) VAL='0.9' RISE=1
+
+* Rise and fall time at Y
+.meas tran trise TRIG v(Y) VAL='0.1*1.8' RISE=1 \\
+              TARG v(Y) VAL='0.9*1.8' RISE=1
+
+.meas tran tfall TRIG v(Y) VAL='0.9*1.8' FALL=1 \\
+              TARG v(Y) VAL='0.1*1.8' FALL=1
+
+* Logic high/low
+.meas tran VOH MAX v(Y)
+.meas tran VOL MIN v(Y)
+
 .endc
 
 
 "}
-C {lab_pin.sym} 320 -160 2 0 {name=p13 sig_type=std_logic lab=Y}
-C {MUX41PTLBuffer/MUX41PTLBuffer.sym} 150 -50 0 0 {name=x2}
+C {lab_pin.sym} 330 -160 2 0 {name=p13 sig_type=std_logic lab=Y}
+C {Mux41PTL/Mux41PTL.sym} 170 -40 0 0 {name=x2}
+C {gnd.sym} 330 -100 0 0 {name=l11 lab=GND}
+C {capa.sym} 330 -130 0 0 {name=CLoad
+m=1
+value=\{C\}
+footprint=1206
+device="ceramic capacitor"}

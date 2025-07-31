@@ -1,24 +1,29 @@
 ** sch_path: /foss/designs/MUX41PTLBuffer/MUX41PTLBuffer_tb.sch
 **.subckt MUX41PTLBuffer_tb
-V1 VDD GND 3.3
-V2 A GND 1.8
-V3 B GND 0
-V4 C GND 0
-V5 D GND 1.8
-V6 S1 GND PULSE(0 1.8 0 1n 1n 20n 40n)
-V7 S0 GND PULSE(0 1.8 40n 1n 1n 40n 80n)
-x2 VDD GND S1 S0 A B Y C D MUX41PTLBuffer
-**** begin user architecture code
-
-
 .include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
 .lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
 
+
+
+V1 VDD GND 3.3
+V2 A   GND 3.3
+V3 B   GND 0
+V4 C   GND 0
+V5 D   GND 3.3
+V6 S1 GND PULSE(0 3.3 30n 0.1n 0.1n 30n 60n)
+V7 S0 GND PULSE(0 3.3 15n 0.1n 0.1n 15n 30n)
+x2 VDD GND S1 S0 A B Y C D MUX41PTLBuffer
+C1 Y GND {C} m=1
+**** begin user architecture code
+
+.param C=6.0f
+
+
 .control
-save all
-tran 1n 80n
-write test_mux41.raw
+    tran 0.1n 60n
+    plot V(S0) V(S1)+4 V(Y)+8
 .endc
+
 
 
 
